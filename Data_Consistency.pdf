@@ -1,0 +1,147 @@
+
+# ✅  Data Consistency Patterns**
+
+In distributed systems, **data consistency** is a major challenge. You have multiple services, databases, and replicas across regions. Here, we’ll go through:
+
+* **Strong Consistency**
+* **Eventual Consistency**
+* **Causal Consistency**
+* **Read/Write Patterns**
+* **Use Cases**
+
+---
+
+## 🔐 1. Strong Consistency
+
+### 📖 Definition:
+
+All clients always see the **most recent write**. After a write completes, all future reads return that value.
+
+### 🔧 Use When:
+
+* Accuracy is critical (banking, inventory)
+* You can tolerate higher latency
+
+### 🧠 How It's Achieved:
+
+* **Synchronous replication**
+* **Two-Phase Commit (2PC)**
+* **Distributed locks**
+
+### 🔻 Downsides:
+
+* Higher latency
+* Less available during partition (CAP Theorem)
+
+### ✅ Example:
+
+Bank transfer → You debit ₹10 from Account A. You **must** reflect this immediately in Account B.
+
+---
+
+## 🕒 2. Eventual Consistency
+
+### 📖 Definition:
+
+All nodes will eventually reach the **same final state**, but not instantly.
+
+### 🔧 Use When:
+
+* You prioritize availability over immediate consistency
+* Temporary inconsistency is acceptable (like social media feed)
+
+### 🧠 How It's Achieved:
+
+* **Asynchronous replication**
+* **Conflict resolution** strategies (Last Write Wins, CRDTs)
+
+### ✅ Example:
+
+* Updating a tweet's like count
+* User profile update syncs across regions
+
+### 🔻 Downsides:
+
+* Risk of stale reads
+* Harder to reason about in complex systems
+
+---
+
+## 👓 3. Causal Consistency
+
+### 📖 Definition:
+
+If operation **A causes operation B**, then everyone must see **A before B**.
+
+### 🔧 Use When:
+
+* Causality matters (chats, notifications)
+* You want a middle-ground between strong & eventual
+
+### 🧠 How It's Achieved:
+
+* **Vector clocks**
+* **Version histories**
+
+### ✅ Example:
+
+In a chat app, if Alice sends "Hi" and then "How are you?", Bob should never see the second before the first.
+
+---
+
+## ⚖️ Comparison Table
+
+| Feature        | Strong Consistency      | Eventual Consistency | Causal Consistency   |
+| -------------- | ----------------------- | -------------------- | -------------------- |
+| Read freshness | Always up-to-date       | Might be stale       | Depends on causality |
+| Latency        | High                    | Low                  | Medium               |
+| Availability   | Low (during partitions) | High                 | Medium               |
+| Complexity     | High                    | Medium               | High                 |
+| Best For       | Banking, Inventory      | Social media, DNS    | Messaging, Docs      |
+
+---
+
+## 🔄 Read/Write Patterns for Consistency
+
+| Pattern           | Description                                     |
+| ----------------- | ----------------------------------------------- |
+| **Read Repair**   | Read operation also fixes stale data            |
+| **Write-through** | Write updates cache + DB simultaneously         |
+| **Write-behind**  | Writes to cache first, DB later                 |
+| **Quorum**        | Read/write must reach a minimum number of nodes |
+
+---
+
+## 🧪 Conflict Resolution Strategies
+
+| Strategy               | Example                           |
+| ---------------------- | --------------------------------- |
+| Last Write Wins        | Keep the latest timestamped value |
+| CRDT                   | Merges values mathematically      |
+| Operational Transforms | Used in collaborative editing     |
+| Manual Resolution      | Human or admin resolves conflicts |
+
+---
+
+## 🧠 Real-World Use Cases
+
+| System                                          | Consistency Model                         |
+| ----------------------------------------------- | ----------------------------------------- |
+| **Banking system**                              | Strong                                    |
+| **Amazon product availability**                 | Eventual                                  |
+| **WhatsApp or Slack chats**                     | Causal                                    |
+| **Cloud Storage (S3)**                          | Eventual                                  |
+| **Distributed databases (Cassandra, DynamoDB)** | Eventual by default, tuneable consistency |
+
+---
+
+## 🔚 Summary
+
+| Term                 | TL;DR                             |
+| -------------------- | --------------------------------- |
+| Strong Consistency   | Always get latest data            |
+| Eventual Consistency | Data syncs over time              |
+| Causal Consistency   | Order of related ops is preserved |
+
+---
+
